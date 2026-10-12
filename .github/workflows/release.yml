@@ -1,0 +1,75 @@
+name: Build release installers
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows-installer:
+    name: Windows MSI
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Build MSI
+        run: .\gradlew.bat :desktopApp:packageMsi
+
+      - name: Upload MSI to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: desktopApp/build/compose/binaries/main/msi/*.msi
+
+      - name: Upload MSI as workflow artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: KScanUtils-Windows
+          path: desktopApp/build/compose/binaries/main/msi/*.msi
+          if-no-files-found: error
+
+  linux-installer:
+    name: Linux DEB
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
+      - name: Build DEB
+        run: ./gradlew :desktopApp:packageDeb
+
+      - name: Upload DEB to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: desktopApp/build/compose/binaries/main/deb/*.deb
+
+      - name: Upload DEB as workflow artifact
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: KScanUtils-Linux
+          path: desktopApp/build/compose/binaries/main/deb/*.deb
+          if-no-files-found: error
