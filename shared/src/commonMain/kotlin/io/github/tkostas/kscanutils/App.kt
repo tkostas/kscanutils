@@ -36,7 +36,7 @@ data class UtilityCategory(
     val description: String,
 )
 
-const val APP_VERSION = "1.0.1"
+const val APP_VERSION = "1.0.2"
 private const val PROJECT_URL = "https://github.com/tkostas/kscanutils"
 
 val utilityCategories = listOf(

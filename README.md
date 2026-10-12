@@ -25,7 +25,7 @@ options:
 ### Building installers
 
 - Windows MSI: `./gradlew :desktopApp:packageMsi`
-- Linux DEB: `./gradlew :desktopApp:packageDeb`
+- Linux DEB (Ubuntu 22.04 or newer): `./gradlew :desktopApp:packageDeb`
 
 Publishing a GitHub Release automatically builds both installers and attaches them to the release. The same workflow can be started manually from the repository's **Actions** tab; manual runs keep the installers as workflow artifacts instead of attaching them to a release.
 

@@ -22,7 +22,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Deb)
             packageName = "KScanUtils"
-            packageVersion = "1.0.1"
+            packageVersion = "1.0.2"
             vendor = "Kostas Tsolis"
             licenseFile.set(rootProject.file("LICENSE"))
 

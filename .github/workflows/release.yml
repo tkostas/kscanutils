@@ -42,7 +42,9 @@ jobs:
 
   linux-installer:
     name: Linux DEB
-    runs-on: ubuntu-latest
+    # Build on the oldest supported Ubuntu release so the generated package
+    # does not depend on Ubuntu 24.04's t64 library package names.
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -59,6 +61,15 @@ jobs:
 
       - name: Build DEB
         run: ./gradlew :desktopApp:packageDeb
+
+      - name: Verify portable dependencies
+        run: |
+          dependencies="$(dpkg-deb --field desktopApp/build/compose/binaries/main/deb/*.deb Depends)"
+          echo "$dependencies"
+          if grep -q 't64' <<< "$dependencies"; then
+            echo "Unexpected Ubuntu 24.04-only t64 dependency"
+            exit 1
+          fi
 
       - name: Upload DEB to release
         if: github.event_name == 'release'
